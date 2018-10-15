@@ -7,6 +7,9 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
+
 
 struct Node {
     //下一个节点
@@ -32,13 +35,13 @@ struct Node *GetTrail(struct LinkedList *list) {
 }
 //O(n)
 void Insert(struct LinkedList *list, struct Node *node, int index) {
-    if(list == NULL) return;
+    if(list == NULL || node == NULL || index < 0) return;
     if(list->count == 0) {
         //没有头
         list->head = node;
         list->head->next = NULL;
         list->count ++;
-    } else if(index >= list->count) {
+    } else if(index >= list->count ) {
         //插入到尾巴
         struct Node *trail = GetTrail(list);
         trail->next = node;
@@ -59,6 +62,23 @@ void Insert(struct LinkedList *list, struct Node *node, int index) {
         list->count ++;
     }
 }
+void Append(struct LinkedList *list, struct Node *node) {
+    Insert(list, node, list->count);
+}
+//O(n)
+struct Node *GetNodeAtIndex(struct LinkedList *list, int index) {
+    if (list->count == 0 || index > list->count - 1 || index < 0) return NULL;
+    int i = 0 ;
+    struct Node *curNode = list->head;
+    while (curNode != NULL) {
+        if (i == index) {
+            break;
+        }
+        curNode = curNode->next;
+        i ++;
+    }
+    return curNode;
+}
 //O(n)
 void DumpList(struct LinkedList *list) {
     if(list == NULL || list->count == 0) return;
@@ -70,6 +90,33 @@ void DumpList(struct LinkedList *list) {
         curIndex ++;
     }while (curNode != NULL);
     printf("NULL \n");
+}
+void DumpNode(struct Node *node) {
+    if (node && node->value) {
+        printf("Node: %c\n", node->value);
+        return;
+    }
+    printf("Node is NULL \n");
+}
+//O(n)
+void RemoveNode(struct LinkedList *list, struct Node *node) {
+    if (list == NULL || list->count == 0 || node == NULL) return ;
+    struct Node *curNode = list->head;
+    struct Node *preNode = NULL;
+    while (curNode != NULL) {
+        if(curNode->value == node->value) {
+            struct Node *next = curNode->next;
+            if(preNode == NULL) {
+                list->head = next;
+            } else {
+                preNode->next = next;
+            }
+            break;
+        }
+        preNode = curNode;
+        curNode = curNode->next;
+        
+    }
 }
 
 struct Node *CreateNewNode(int value) {
@@ -85,19 +132,51 @@ void testInsert(){
     Insert(&list, CreateNewNode('B'), 1);
     Insert(&list, CreateNewNode('C'), 2);
     DumpList(&list);
-    Insert(&list, CreateNewNode('D'), 3);
+    Insert(&list, CreateNewNode('D'), 2);
     DumpList(&list);
     Insert(&list, CreateNewNode('E'), 0);
     DumpList(&list);
     Insert(&list, CreateNewNode('F'), 1);
     DumpList(&list);
+    Append(&list, CreateNewNode('G'));
+    DumpList(&list);
+  
+    DumpNode(GetNodeAtIndex(&list, -1));
+    DumpNode(GetNodeAtIndex(&list, 0));
+    DumpNode(GetNodeAtIndex(&list, 1));
+    DumpNode(GetNodeAtIndex(&list, 6));
+    DumpNode(GetNodeAtIndex(&list, 7));
+    DumpNode(GetNodeAtIndex(&list, 4));
 }
-
+void testRemove() {
+    struct LinkedList list ;
+    memset(&list, 0, sizeof(struct LinkedList));
+    Insert(&list, CreateNewNode('A'), 0);
+    Insert(&list, CreateNewNode('B'), 1);
+    Insert(&list, CreateNewNode('C'), 2);
+    DumpList(&list);
+    Insert(&list, CreateNewNode('D'), 2);
+    DumpList(&list);
+    Insert(&list, CreateNewNode('E'), 0);
+    DumpList(&list);
+    Insert(&list, CreateNewNode('F'), 1);
+    DumpList(&list);
+    Append(&list, CreateNewNode('G'));
+    DumpList(&list);
+    printf("删除 \n");
+    RemoveNode(&list, CreateNewNode('C'));
+    DumpList(&list);
+    RemoveNode(&list, CreateNewNode('E'));
+    DumpList(&list);
+    RemoveNode(&list, CreateNewNode('G'));
+    DumpList(&list);
+}
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     printf("Hello, World!\n");
-    testInsert();
+//    testInsert();
+    testRemove();
     return 0;
 }
 
