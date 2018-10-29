@@ -118,13 +118,29 @@ void RemoveNode(struct LinkedList *list, struct Node *node) {
         
     }
 }
-
 struct Node *CreateNewNode(int value) {
     struct Node *node = (struct Node *)malloc(sizeof(struct Node));
     memset(node, 0, sizeof(struct Node));
     node->value = value;
     return node;
 }
+//O(n)
+struct LinkedList * ReverseLinkedList(struct LinkedList *list) {
+    if(!list) return NULL;
+    int count = list->count;
+    if(count == 0) return list;
+    struct Node *next = list->head;
+    struct LinkedList *reverseList = (struct LinkedList *)malloc(sizeof(LinkedList));
+    memset(reverseList, 0, sizeof(LinkedList));
+    while (next) {
+        struct Node *n = CreateNewNode(next->value);
+        Append(reverseList, n);
+        next = next->next;
+    }
+    return reverseList;
+}
+
+
 void testInsert(){
     struct LinkedList list ;
     memset(&list, 0, sizeof(struct LinkedList));
@@ -172,11 +188,30 @@ void testRemove() {
     DumpList(&list);
 }
 
+void testReverse() {
+    struct LinkedList list ;
+    memset(&list, 0, sizeof(struct LinkedList));
+    Insert(&list, CreateNewNode('A'), 0);
+    Insert(&list, CreateNewNode('B'), 1);
+    Insert(&list, CreateNewNode('C'), 2);
+    Insert(&list, CreateNewNode('D'), 2);
+    Insert(&list, CreateNewNode('E'), 0);
+    Insert(&list, CreateNewNode('F'), 1);
+    Append(&list, CreateNewNode('G'));
+    DumpList(&list);
+    printf("反转 \n");
+    struct LinkedList * reverseList = ReverseLinkedList(&list);
+    DumpList(reverseList);
+    free(reverseList);
+}
+
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     printf("Hello, World!\n");
 //    testInsert();
-    testRemove();
+//    testRemove();
+    testReverse();
     return 0;
 }
 
