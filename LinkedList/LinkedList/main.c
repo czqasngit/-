@@ -99,6 +99,7 @@ void DumpNode(struct Node *node) {
     printf("Node is NULL \n");
 }
 //O(n)
+//删除
 void RemoveNode(struct LinkedList *list, struct Node *node) {
     if (list == NULL || list->count == 0 || node == NULL) return ;
     struct Node *curNode = list->head;
@@ -125,6 +126,7 @@ struct Node *CreateNewNode(int value) {
     return node;
 }
 //O(n)
+//反转链表
 struct LinkedList * ReverseLinkedList(struct LinkedList *list) {
     if(!list) return NULL;
     int count = list->count;
@@ -139,7 +141,26 @@ struct LinkedList * ReverseLinkedList(struct LinkedList *list) {
     }
     return reverseList;
 }
-
+//O(n)
+//检测链表中环
+struct Node *GetCenterNode(struct LinkedList *list, int *index) {
+    if (list == NULL || list->count == 0)  {
+        *index = -1;
+        return NULL;
+    }
+    struct Node *centerNode = NULL;
+    int centeIndex = 0;
+    struct Node *fast = list->head;
+    struct Node *slow = list->head;
+    while (fast->next != NULL && fast->next->next != NULL) {
+        fast = fast->next->next;
+        slow = slow->next;
+        centeIndex ++;
+    }
+    *index = centeIndex;
+    centerNode = slow;
+    return centerNode;
+}
 
 void testInsert(){
     struct LinkedList list ;
@@ -205,13 +226,33 @@ void testReverse() {
     free(reverseList);
 }
 
+void testGetCenter() {
+    struct LinkedList list ;
+    memset(&list, 0, sizeof(struct LinkedList));
+    Insert(&list, CreateNewNode('A'), 0);
+    Insert(&list, CreateNewNode('B'), 1);
+    Insert(&list, CreateNewNode('C'), 2);
+    Insert(&list, CreateNewNode('D'), 2);
+    Insert(&list, CreateNewNode('E'), 0);
+    Insert(&list, CreateNewNode('F'), 1);
+    Append(&list, CreateNewNode('G'));
+    Append(&list, CreateNewNode('F'));
+    Append(&list, CreateNewNode('X'));
+    Append(&list, CreateNewNode('M'));
+    DumpList(&list);
+    int centeIndex = -1;
+    struct Node *centerNode = GetCenterNode(&list, &centeIndex);
+    printf("中点: %c -- %d \n", centerNode->value, centeIndex);
+}
+
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     printf("Hello, World!\n");
 //    testInsert();
 //    testRemove();
-    testReverse();
+//    testReverse();
+    testGetCenter();
     return 0;
 }
 
